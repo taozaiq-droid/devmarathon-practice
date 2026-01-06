@@ -1,2 +1,1 @@
-# devmarathon-practice
-devmarathonの練習用
+﻿## 頑張って!!!!!
