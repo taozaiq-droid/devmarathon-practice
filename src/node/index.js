@@ -1,50 +1,92 @@
 const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const { Pool } = require("pg");
+
 const app = express();
+
+// 1. ミドルウェア
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = 社員番号;
-
-const cors = require("cors");
-app.use(cors());
-
-const { Pool } = require("pg");
+// 2. データベース接続
 const pool = new Pool({
-  user: "x", // PostgreSQLのユーザー名に置き換えてください
-  host: "x",
-  database: "x", // PostgreSQLのデータベース名に置き換えてください
-  password: "x", // PostgreSQLのパスワードに置き換えてください
+  user: "postgres",
+  host: "db",
+  database: "postgres",
+  password: "pass_5466",
   port: 5432,
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// 3. ルート設定
 
+// 【一覧取得】
 app.get("/customers", async (req, res) => {
   try {
-    const customerData = await pool.query("SELECT * FROM customers");
-    res.send(customerData.rows);
+    const customerData = await pool.query("SELECT * FROM customers ORDER BY customer_id ASC");
+    res.json(customerData.rows);
   } catch (err) {
     console.error(err);
-    res.send("Error " + err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-app.post("/add-customer", async (req, res) => {
+// 【詳細取得】
+app.get("/customers/:id", async (req, res) => {
   try {
-    const { companyName, industry, contact, location } = req.body;
-    const newCustomer = await pool.query(
-      "INSERT INTO customers (company_nam, industry, contact, location) VALUES ($1, $2, $3, $4) RETURNING *",
-      [companyName, industry, contact, location]
-    );
-    res.json({ success: true, customer: newCustomer.rows[0] });
+    const { id } = req.params;
+    const customerData = await pool.query("SELECT * FROM customers WHERE customer_id = $1", [id]);
+    res.json(customerData.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.json({ success: false });
+    res.status(500).json({ error: err.message });
   }
 });
 
-app.use(express.static("public"));
+// 【新規登録】
+app.post("/register", async (req, res) => {
+  try {
+    const { company_name, industry, contact, location } = req.body;
+    await pool.query(
+      "INSERT INTO customers (company_name, industry, contact, location) VALUES ($1, $2, $3, $4)",
+      [company_name, industry, contact, location]
+    );
+    res.redirect("/customer/list.html");
+  } catch (err) {
+    res.status(500).send("エラー: " + err.message);
+  }
+});
+
+// 【更新】
+app.put("/customers/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { company_name, industry, contact, location } = req.body;
+    await pool.query(
+      "UPDATE customers SET company_name = $1, industry = $2, contact = $3, location = $4 WHERE customer_id = $5",
+      [company_name, industry, contact, location, id]
+    );
+    res.json({ message: "更新成功" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 【削除】
+app.delete("/customers/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM customers WHERE customer_id = $1", [id]);
+    res.json({ message: "削除成功" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. 静的ファイル
+app.use(express.static(path.join(__dirname, "src/web")));
+
+// 5. 起動
+app.listen(5466, "0.0.0.0", () => {
+  console.log(`Server running on port 5466`);
+});

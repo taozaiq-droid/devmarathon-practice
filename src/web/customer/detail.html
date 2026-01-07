@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>顧客詳細</title>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">顧客詳細情報</h2>
+            </div>
+            <div class="card-body">
+                <div id="detail-content">
+                    <p>読み込み中...</p>
+                </div>
+                <hr>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="location.href='list.html'">一覧に戻る</button>
+                    <button id="edit-button" class="btn btn-warning ml-2">この情報を編集する</button>
+                    <button id="delete-button" class="btn btn-danger ml-2">この顧客を削除する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            // 編集ボタンの動作
+            document.getElementById('edit-button').onclick = () => {
+                location.href = `edit.html?id=${id}`;
+            };
+
+            // 削除ボタンの動作
+            document.getElementById('delete-button').onclick = async () => {
+                if (confirm('本当にこの顧客情報を削除しますか？')) {
+                    try {
+                        const response = await fetch(`http://localhost:5466/customers/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (response.ok) {
+                            alert('削除しました');
+                            location.href = 'list.html';
+                        } else {
+                            alert('削除に失敗しました');
+                        }
+                    } catch (err) {
+                        console.error('削除エラー:', err);
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(`http://localhost:5466/customers/${id}`);
+                const customer = await response.json();
+
+                const content = document.getElementById('detail-content');
+                content.innerHTML = `
+                    <div class="mb-3"><strong>会社名:</strong> <h3>${customer.company_name || customer.companyname}</h3></div>
+                    <div class="mb-2"><strong>業界:</strong> ${customer.industry}</div>
+                    <div class="mb-2"><strong>連絡先:</strong> ${customer.contact}</div>
+                    <div class="mb-2"><strong>所在地:</strong> ${customer.location}</div>
+                `;
+            } catch (error) {
+                console.error('エラー:', error);
+                document.getElementById('detail-content').innerText = 'データの取得に失敗しました。';
+            }
+        }
+        fetchDetail();
+    </script>
+</body>
+</html>

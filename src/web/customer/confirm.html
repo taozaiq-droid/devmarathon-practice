@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>登録内容の確認</title>
+    <style>
+        body { background-color: #f8f9fa; }
+        .confirm-container { max-width: 600px; margin-top: 50px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .data-label { font-weight: bold; color: #495057; }
+        .data-value { margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container confirm-container">
+        <h2 class="mb-4">登録内容の確認</h2>
+        <p>以下の内容で間違いありませんか？</p>
+
+        <div class="mb-4">
+            <div class="data-label">会社名</div>
+            <div id="view-company-name" class="data-value"></div>
+
+            <div class="data-label">業界</div>
+            <div id="view-industry" class="data-value"></div>
+
+            <div class="data-label">連絡先</div>
+            <div id="view-contact" class="data-value"></div>
+
+            <div class="data-label">所在地</div>
+            <div id="view-location" class="data-value"></div>
+        </div>
+
+        <form action="http://localhost:5466/register" method="POST">
+            <input type="hidden" id="hidden-company-name" name="company_name">
+            <input type="hidden" id="hidden-industry" name="industry">
+            <input type="hidden" id="hidden-contact" name="contact">
+            <input type="hidden" id="hidden-location" name="location">
+            
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="history.back()">修正する</button>
+                <button type="submit" class="btn btn-success">確定して登録する</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // URLパラメータ（?company_name=... など）を取得
+        const params = new URLSearchParams(window.location.search);
+        
+        const data = {
+            companyName: params.get('company_name'),
+            industry: params.get('industry'),
+            contact: params.get('contact'),
+            location: params.get('location')
+        };
+
+        // 画面の表示部分にセット
+        document.getElementById('view-company-name').innerText = data.companyName;
+        document.getElementById('view-industry').innerText = data.industry;
+        document.getElementById('view-contact').innerText = data.contact;
+        document.getElementById('view-location').innerText = data.location;
+
+        // フォーム送信用の隠しフィールド（hidden）にセット
+        document.getElementById('hidden-company-name').value = data.companyName;
+        document.getElementById('hidden-industry').value = data.industry;
+        document.getElementById('hidden-contact').value = data.contact;
+        document.getElementById('hidden-location').value = data.location;
+    </script>
+</body>
+</html>

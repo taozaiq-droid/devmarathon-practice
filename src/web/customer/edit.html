@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>顧客編集</title>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h2 class="mb-0">顧客情報の編集</h2>
+            </div>
+            <div class="card-body">
+                <form id="edit-form">
+                    <div class="form-group">
+                        <label>会社名</label>
+                        <input type="text" id="company_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>業界</label>
+                        <input type="text" id="industry" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>連絡先</label>
+                        <input type="text" id="contact" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>所在地</label>
+                        <input type="text" id="location" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">更新保存</button>
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">キャンセル</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        // 1. まずは今のデータを読み込んでフォームに入れる
+        async function loadCurrentData() {
+            const response = await fetch(`http://localhost:5466/customers/${id}`);
+            const customer = await response.json();
+            
+            document.getElementById('company_name').value = customer.company_name;
+            document.getElementById('industry').value = customer.industry;
+            document.getElementById('contact').value = customer.contact;
+            document.getElementById('location').value = customer.location;
+        }
+
+        // 2. 保存ボタンが押された時の処理
+        document.getElementById('edit-form').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const updatedData = {
+                company_name: document.getElementById('company_name').value,
+                industry: document.getElementById('industry').value,
+                contact: document.getElementById('contact').value,
+                location: document.getElementById('location').value
+            };
+
+            const response = await fetch(`http://localhost:5466/customers/${id}`, {
+                method: 'PUT', // 更新はPUTメソッドを使うのが一般的
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                alert('更新しました！');
+                location.href = `detail.html?id=${id}`;
+            } else {
+                alert('更新に失敗しました');
+            }
+        };
+
+        loadCurrentData();
+    </script>
+</body>
+</html>

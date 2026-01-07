@@ -3,20 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
-    <!-- Bootstrap CSSの読み込み -->
+    <title>顧客情報登録</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <!-- ここにHTMLを書く -->
+        <h2 class="mb-4">新規顧客登録</h2>
+        
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label>会社名</label>
+                <input type="text" name="company_name" class="form-control" placeholder="株式会社 〇〇" required>
+            </div>
+            <div class="form-group">
+                <label>業界</label>
+                <input type="text" name="industry" class="form-control" placeholder="製造業、IT、など" required>
+            </div>
+            <div class="form-group">
+                <label>連絡先（電話番号）</label>
+                <input type="text" name="contact" class="form-control" placeholder="03-1234-5678" required>
+            </div>
+            <div class="form-group">
+                <label>所在地</label>
+                <input type="text" name="location" class="form-control" placeholder="東京都渋谷区..." required>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">この内容で登録する</button>
+                <a href="/customer/list.html" class="btn btn-secondary ml-2">一覧に戻る</a>
+            </div>
+        </form>
     </div>
-    <script type="module">
-        <!-- ここにJSを書く -->
-    </script>
-    <!-- BootstrapのJavaScriptの読み込み -->
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
