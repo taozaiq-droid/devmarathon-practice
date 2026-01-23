@@ -12,10 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // 2. データベース接続
 const pool = new Pool({
-  user: "postgres",
-  host: "db",
-  database: "postgres",
-  password: "pass_5466",
+  user: "user_toya_aoki",
+  host: "localhost",
+  database: "db_toya_aoki",
+  password: "5Rw5YDaWc5jc",
   port: 5432,
 });
 

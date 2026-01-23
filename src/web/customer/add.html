@@ -8,34 +8,35 @@
 <body>
     <div class="container mt-5">
         <h2>新規顧客登録</h2>
-        
-        <form action="confirm.html" method="GET">
-            
+
+        <form action="confirm.html" method="GET" id="customer-form">
+
             <div class="form-group">
                 <label>会社名</label>
-                <input type="text" name="company_name" class="form-control" required>
+                <input type="text" name="company_name" id="companyName" class="form-control" required>
             </div>
-            
+
             <div class="form-group">
                 <label>業界</label>
-                <input type="text" name="industry" class="form-control" required>
+                <input type="text" name="industry" id="industry" class="form-control" required>
             </div>
-            
+
             <div class="form-group">
                 <label>連絡先</label>
-                <input type="text" name="contact" class="form-control" required>
+                <input type="text" name="contact" id="contact" class="form-control" required>
             </div>
-            
+
             <div class="form-group">
                 <label>所在地</label>
-                <input type="text" name="location" class="form-control" required>
+                <input type="text" name="location" id="location" class="form-control" required>
             </div>
-            
+
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">登録する</button>
                 <button type="button" class="btn btn-secondary" onclick="location.href='../index.html'">キャンセル</button>
             </div>
 
-        </form> </div>
+        </form>
+    </div>
 </body>
 </html>
