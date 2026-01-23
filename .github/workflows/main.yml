@@ -1,0 +1,28 @@
+name: Production Workflow
+
+on:
+  push:
+    branches:
+      - main  # 1. mainブランチにpushされたら動く
+
+jobs:
+  # 2. Staging環境でテストを実施する
+  test-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Test
+        run: |
+          chmod +x deploy.sh
+          ./deploy.sh staging  # Stagingでもdeploy.shを使用
+
+  # 3. テストが問題なかったらProductionへデプロイする
+  deploy-production:
+    needs: test-staging  # テスト成功が条件
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: |
+          chmod +x deploy.sh
+          ./deploy.sh production  # Productionでもdeploy.shを使用
