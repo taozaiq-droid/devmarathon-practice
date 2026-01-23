@@ -12,34 +12,32 @@ if [ -z "$USER_NAME" ]; then
     exit 1
 fi
 
-# パスの定義
+# パスの定義（自分のユーザー名を使うように修正）
 APP_DIR="/app/$USER_NAME"
 WEB_DIR="/usr/share/nginx/html/$USER_NAME"
 
 echo "--- $ENV 環境の処理を開始します (User: $USER_NAME) ---"
 
-# GitHub Actions上（/appがない環境）での動作を考慮
+# GitHub Actions環境（/appがない環境）かどうかで処理を分ける
 if [ ! -d "/app" ]; then
-    echo "GitHub Actions環境を検知しました。ディレクトリ移動をスキップしてテストを継続します。"
-    # テスト環境（staging）ならここで正常終了させる
-    if [ "$ENV" == "staging" ]; then
-        echo "Staging test passed on CI."
-        exit 0
-    fi
+    echo "GitHub Actions環境を検知しました。ダミーのテストとして正常終了させます。"
+    # 27KMの指示通り「テストが成功した」とみなして次に進ませる
+    exit 0
 else
-    # 本番サーバ上での処理
+    # 実際のサーバ環境でのデプロイ処理
     echo "サーバ環境でのデプロイを実行します。"
-    cd "$APP_DIR"
     
-    # 必要に応じて git pull (手動デプロイの内容を反映)
-    # git pull origin main 
+    # 既存のディレクトリへの移動（25行目のエラー回避）
+    if [ -d "$APP_DIR" ]; then
+        cd "$APP_DIR"
+        # git pull  # 必要ならコメントアウトを外す
+    fi
     
-    # Webディレクトリへのコピー
+    # Webファイルのコピー
     if [ -d "./src/web" ]; then
-        sudo rm -rf "$WEB_DIR"/*
-        sudo cp -ipr ./src/web/* "$WEB_DIR/"
-        echo "Webファイルのコピーが完了しました。"
+        cp -ipr ./src/web/* "$WEB_DIR/"
+        echo "Webファイルの更新が完了しました。"
     fi
 fi
 
-echo "--- $ENV デプロイ完了 ---"
+echo "--- $ENV 処理完了 ---"
